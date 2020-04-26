@@ -4,6 +4,11 @@ import pygame
 from Cube import Cube
 import SnakeAI
 
+right_arrow = pygame.event.Event(pygame.KEYDOWN, {'key': 275, 'mod': 0, 'unicode': '', 'scancode': 77})
+left_arrow = pygame.event.Event(pygame.KEYDOWN, {'key': 276, 'mod': 0, 'unicode': '', 'scancode': 75})
+up_arrow = pygame.event.Event(pygame.KEYDOWN, {'key': 273, 'mod': 0, 'unicode': '', 'scancode': 72})
+down_arrow = pygame.event.Event(pygame.KEYDOWN, {'key': 274, 'mod': 0, 'unicode': '', 'scancode': 80})
+
 
 class Snake:
     body = []
@@ -22,29 +27,35 @@ class Snake:
             if event.type == pygame.QUIT:
                 pygame.quit()
         # Random move
-        # No clue what to put ehre to make this part function with everything else
-            choice = SnakeAI.player_move()
-            if choice == pygame.K_LEFT:
-                self.dirnx = -1
-                self.dirny = 0
-                self.turns[self.head.pos[:]] = [self.dirnx, self.dirny]
-            elif choice == pygame.K_RIGHT:
-                self.dirnx = 1
-                self.dirny = 0
-                self.turns[self.head.pos[:]] = [self.dirnx, self.dirny]
-            elif choice == pygame.K_DOWN:
-                self.dirnx = 0
-                self.dirny = 1
-                self.turns[self.head.pos[:]] = [self.dirnx, self.dirny]
-            elif choice == pygame.K_UP:
-                self.dirnx = 0
-                self.dirny = -1
-                self.turns[self.head.pos[:]] = [self.dirnx, self.dirny]
+        # Turns aren't being plugged inot the dictionary correctly. Have to figure out why manually entering in key
+        # doesn't cause this issue but randomizing like this causes this issue
+            elif event.type == pygame.KEYDOWN:
+                choice = SnakeAI.player_move()
+                if choice == pygame.K_LEFT:
+                    self.dirnx = -1
+                    self.dirny = 0
+                    self.turns[self.head.pos[:]] = [self.dirnx, self.dirny]
+                elif choice == pygame.K_RIGHT:
+                    self.dirnx = 1
+                    self.dirny = 0
+                    self.turns[self.head.pos[:]] = [self.dirnx, self.dirny]
+                elif choice == pygame.K_DOWN:
+                    self.dirnx = 0
+                    self.dirny = 1
+                    self.turns[self.head.pos[:]] = [self.dirnx, self.dirny]
+                elif choice == pygame.K_UP:
+                    self.dirnx = 0
+                    self.dirny = -1
+                    self.turns[self.head.pos[:]] = [self.dirnx, self.dirny]
+        pygame.event.post(right_arrow)
+        pygame.event.post(left_arrow)
+        pygame.event.post(up_arrow)
+        pygame.event.post(down_arrow)
         # Makes sure to update body of snake as it turns
         for i, c in enumerate(self.body):
             p = c.pos[:]
-            print("P: " + str(p))
-            print("turns: " + str(self.turns))
+            # print("P: " + str(p))
+            # print("turns: " + str(self.turns))
             if p in self.turns:
                 turn = self.turns[p]
                 c.move(turn[0], turn[1])

@@ -1,4 +1,6 @@
 import pygame
+
+
 class Cube:
     rows = 25
     w = 800
