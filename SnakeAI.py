@@ -1,7 +1,5 @@
 import pygame
 import random
-snake_block = 10
-snake_speed = 15
 
 action_dict = {
     0: pygame.K_LEFT,
