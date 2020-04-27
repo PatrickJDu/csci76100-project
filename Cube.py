@@ -14,7 +14,7 @@ class Cube:
     def move(self, dirnx, dirny):
         self.dirnx = dirnx
         self.dirny = dirny
-        self.pos = (self.pos[0] + self.dirnx, self.pos[1] + self.dirny)
+        self.pos = ((self.pos[0] + self.dirnx) % self.rows, (self.pos[1] + self.dirny) % self.rows)
 
     def draw(self, surface, eyes=False):
         dis = self.w // self.rows
