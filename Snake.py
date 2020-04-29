@@ -2,7 +2,14 @@ import math
 import random
 import pygame
 from Cube import Cube
-import SnakeAI
+
+# Expectiminimax AIs
+import EMMPreyAI
+import EMMHunterAI
+
+# Genetic Algorithm AIs
+import GenPreyAI
+import GenHunterAI
 
 right_arrow = pygame.event.Event(pygame.KEYDOWN, {'key': 275, 'mod': 0, 'unicode': '', 'scancode': 77})
 left_arrow = pygame.event.Event(pygame.KEYDOWN, {'key': 276, 'mod': 0, 'unicode': '', 'scancode': 75})
@@ -30,7 +37,7 @@ class Snake:
         # Turns aren't being plugged inot the dictionary correctly. Have to figure out why manually entering in key
         # doesn't cause this issue but randomizing like this causes this issue
             elif event.type == pygame.KEYDOWN:
-                choice = SnakeAI.player_move()
+                choice = EMMPreyAI.player_move()
                 if choice == pygame.K_LEFT:
                     self.dirnx = -1
                     self.dirny = 0
