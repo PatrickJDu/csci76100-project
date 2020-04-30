@@ -1,14 +1,12 @@
-import pygame
 import random
+from BaseAI import BaseAI
+from State import State
 
-action_dict = {
-    0: pygame.K_LEFT,
-    1: pygame.K_RIGHT,
-    2: pygame.K_UP,
-    3: pygame.K_DOWN
-}
+class EMMPreyAI(BaseAI):
+    def getMove(self, state):
+        choices = state.getAvailableMoves()
+        choice = choices[random.randint(0, len(choices) - 1)]
+        next_state = choice[1]
+        return next_state
 
-
-def player_move():
-    choice = random.choice(action_dict)
-    return choice
+emmPreyAI = EMMPreyAI()

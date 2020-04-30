@@ -1,14 +1,8 @@
-import pygame
-import random
+from BaseAI import BaseAI
+from State import State
 
-action_dict = {
-    0: pygame.K_LEFT,
-    1: pygame.K_RIGHT,
-    2: pygame.K_UP,
-    3: pygame.K_DOWN
-}
+class GenPreyAI(BaseAI):
+    def getMove(self, state):
+        pass
 
-
-def player_move():
-    choice = random.choice(action_dict)
-    return choice
+genPreyAI = GenPreyAI()
