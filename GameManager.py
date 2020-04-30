@@ -1,75 +1,79 @@
 import random
-
-import pygame
+import Config
+from Displayer import mainDisplay
+from Block import Block
 from Snake import Snake
-from Cube import Cube
+from State import State
 
-w = 800
-rows = 25
-s = Snake((0, 255, 0), (10, 10))
+from EMMPreyAI import emmPreyAI
+from EMMHunterAI import emmHunterAI
 
+from GenPreyAI import genPreyAI
+from GenHunterAI import genHunterAI
 
-def draw_grid(surface):
-    line_btwn = w // rows
-    x = 0
-    y = 0
-    for l in range(rows):
-        x += line_btwn
-        y += line_btwn
-        pygame.draw.line(surface, (255, 255, 255), (x, 0), (x, w))
-        pygame.draw.line(surface, (255, 255, 255), (0, y), (w, y))
+actionDic = {
+    0: "UP",
+    1: "DOWN",
+    2: "LEFT",
+    3: "RIGHT",
+    None: "NONE" # For error logging
+}
 
+class GameManager:
+    def __init__(self):
+        # whether or not the game is over.
+        self.gameOver = False
 
-def redraw_window(surface, food):
-    global w, rows, s
-    surface.fill((0, 0, 0))
-    s.draw(surface)
-    food.draw(surface)
-    draw_grid(surface)
-    pygame.display.update()
+        # initializes the first state of the game.
+        prey_x = random.randint(0, Config.mapSize - 1)
+        prey_y = random.randint(0, Config.mapSize - 1)
+        preyHead = Block(prey_x, prey_y)
 
+        hunter_x = (prey_x + Config.mapSize // 2) % Config.mapSize
+        hunter_y = (prey_y + Config.mapSize // 2) % Config.mapSize
+        hunterHead = Block(hunter_x, hunter_y)
 
-def fruit(item):
-    global rows
-    positions = item.body
-    while True:
-        x = random.randrange(rows)
-        y = random.randrange(rows)
-        # This avoids putting the fruit on top of the snake
-        if len(list(filter(lambda z: z.pos == (x, y), positions))) > 0:
-            continue
-        else:
-            break
-    return x, y
+        self.state = State(Config.PREY_TURN, Snake("prey", [preyHead]), Snake("hunter", [hunterHead]))
 
+    def start(self):
+        mainDisplay.create_window()
 
-def message_box(subject, content):
-    pass
+        mainDisplay.draw(self.state)
 
-
-def main():
-    global w, rows, s
-
-    win = pygame.display.set_mode((w, w))
-
-    clock = pygame.time.Clock()
-    flag = True
-    food = Cube(fruit(s), color=(255, 0, 0))
-
-    while flag:
-        pygame.time.delay(50)
-        clock.tick(10)
-        s.move()
-        if s.body[0].pos == food.pos:
-            s.add_cube()
-            food = Cube(fruit(s), color=(255, 0, 0))
-        for x in range(len(s.body)):
-            # Check for collision on own body
-            if s.body[x].pos in list(map(lambda z:z.pos, s.body[x+1:])):
-                print('Score: ', len(s.body))
-                s.reset((10,10))
+        turn_counter = 0
+        while not self.gameOver:
+            # ends the game when the window is closed or a final state is met.
+            if mainDisplay.is_closed() or self.state.is_final():
+                self.game_over()
                 break
-        redraw_window(win, food)
 
+            if Config.aiMode == Config.EXPECTIMINIMAX:
+                self.expectiminimaxApproach()
+            else:
+                self.geneticAlgorithmApproach()
 
-main()
+            # draws the current state after both players made their turn.
+            turn_counter += 1
+            if turn_counter % 2 == 0:
+                mainDisplay.draw(self.state)
+        mainDisplay.draw(self.state)
+        
+
+    def expectiminimaxApproach(self):
+        nextState = None
+        if self.state.turn == Config.PREY_TURN:
+            nextState = emmPreyAI.getMove(self.state)
+        else:
+            nextState = emmHunterAI.getMove(self.state)
+        if nextState:
+            self.state = nextState
+
+    def geneticAlgorithmApproach(self):
+        pass
+
+    def game_over(self):
+        self.gameOver = True
+
+# starts the game.
+game = GameManager()
+game.start()
