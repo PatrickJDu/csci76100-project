@@ -1,12 +1,19 @@
+# the hunter's choice in move using expectiminimax.
 import random
 from BaseAI import BaseAI
 from State import State
 
+# a singleton class for the hunter ai.
 class EMMHunterAI(BaseAI):
     def getMove(self, state):
-        choices = state.getAvailableMoves()
-        choice = choices[random.randint(0, len(choices) - 1)]
-        next_state = choice[1]
-        return next_state
+        available_moves = state.get_available_moves()
+        if len(available_moves):
+            # gets the next move by randoming selecting from available moves.
+            choice = available_moves[random.randint(0, len(available_moves) - 1)]
+            next_move = choice[0]
+            return next_move
+        else:
+            return None
 
+# this is used as the singleton instance.
 emmHunterAI = EMMHunterAI()
