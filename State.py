@@ -70,6 +70,9 @@ class State:
     def is_empty(self, block):
         return self.map[block.x][block.y] == 0
 
+    def score(self):
+        return 0
+
     # returns the available spaces in the state.
     def get_available_spaces(self):
         return self.available_spaces

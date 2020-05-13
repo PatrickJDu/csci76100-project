@@ -14,13 +14,13 @@ aiMode = EXPECTIMINIMAX
 
 # size of the game screen and the grid.
 windowSize = 800
-mapSize = 10
+mapSize = 25
 sizeRatio = windowSize // mapSize
 
 # the delay between each rendering of the state. must be an integer.
 tickDelay = 100
 
-# the amount of iterations to run the game.
-numIterations = 1
-if len(sys.argv) >= 2:
-    numIterations = max(int(sys.argv[1]), 1)
+# set to 0 to play the game with the window shown
+showWindow = True
+if len(sys.argv) >= 2 and sys.argv[1] == '0':
+    showWindow = False
