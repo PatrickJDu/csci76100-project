@@ -8,7 +8,7 @@ from State import State
 # a singleton class for creating a pygame window and rendering the state of the game.
 class Displayer:
     # creates the pygame window.
-    def create_window(self):
+    def __init__(self):
         self.window = pygame.display.set_mode((Config.windowSize, Config.windowSize))
         self.closed = False
 
@@ -90,4 +90,7 @@ class Displayer:
         pygame.draw.circle(self.window, (255, 255, 255), eye2, radius - pupil_offset)
 
 # this is used as the singleton instance.
-mainDisplay = Displayer()
+mainDisplay = None
+
+if Config.showWindow:
+    mainDisplay = Displayer()
