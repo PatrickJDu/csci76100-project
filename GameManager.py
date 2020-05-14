@@ -50,10 +50,34 @@ class GameManager:
         # builds the first state and adds in the food at a random available position.
         return State(Config.PREY_TURN, Snake("prey", [prey_head]), Snake("hunter", [hunter_head]))
 
+        # Counts how many times the hunter comes within 2 blocks of the fruit
+        # WIP
+
+    def hunter_from_fruit(self, state, count):
+        # Grab the x and y of both the fruit and the hunter
+        fruit_x, fruit_y = state.food.x, state.food.y
+        hunter_x, hunter_y = state.hunter.body[0].x, state.hunter.body[0].y
+        # Checking here if the hunter is ever 2 blocks within the fruits territory
+        x_check = False
+        y_check = False
+        # from x coordinate for fruit -2 to +2. We do a check to see if hunter's x coordinate is in here
+        for i in range(fruit_x - 2, fruit_x + 2):
+            if hunter_x == i % Config.mapSize:
+                x_check = True
+        # same idea as x
+        for i in range(fruit_y - 2, fruit_y + 2):
+            if hunter_y == i % Config.mapSize:
+                y_check = True
+        # if both of these are true means that hunter is within 2 block range of the fruit
+        if y_check and x_check:
+            count += 1
+        print(count)
+        return count
+
     # run the game n number of times then returns a list of scores of each final state.
     def run(self, numIterations = 1):
         scores = []
-        
+        count = 0
         # runs the game n iterations.
         for _ in range(0, numIterations):
             # creates a new start state and begins the game for the iteration. 
@@ -64,7 +88,7 @@ class GameManager:
                 # draws the state of the game after both players made their turn.
                 if Config.showWindow and turn_counter % 2 == 0 and not mainDisplay.is_closed():
                     mainDisplay.draw(state)
-                
+                count = self.hunter_from_fruit(state, count)
                 turn_counter += 1
 
                 # continues playing until it reach a final state.
@@ -86,7 +110,7 @@ class GameManager:
 
             scores.append(state.score())
 
-        return scores
+        return scores, count
                 
     # returns the next state based on expectiminimax.
     def expectiminimaxApproach(self, state):
