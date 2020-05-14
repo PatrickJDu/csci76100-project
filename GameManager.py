@@ -50,9 +50,12 @@ class GameManager:
         # builds the first state and adds in the food at a random available position.
         return State(Config.PREY_TURN, Snake("prey", [prey_head]), Snake("hunter", [hunter_head]))
 
+    # Counts how many times the hunter comes within 2 blocks of the fruit
     def hunter_from_fruit(self, state, count):
+        # Grab the x and y of both the fruit and the hunter
         fruit_x, fruit_y = state.food.x, state.food.y
         hunter_x, hunter_y = state.hunter.body[0].x, state.hunter.body[0].y
+        # Checking here if the hunter is ever 2 blocks within the fruits territory
         if fruit_x - 2 <=hunter_x <= fruit_x +2 and fruit_y - 2 <=hunter_y <= fruit_y +2:
             count += 1
         return count
