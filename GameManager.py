@@ -50,17 +50,24 @@ class GameManager:
         # builds the first state and adds in the food at a random available position.
         return State(Config.PREY_TURN, Snake("prey", [prey_head]), Snake("hunter", [hunter_head]))
 
+    def hunter_from_fruit(self, state, count):
+        fruit_x, fruit_y = state.food.x, state.food.y
+        hunter_x, hunter_y = state.hunter.body[0].x, state.hunter.body[0].y
+        if fruit_x - 2 <=hunter_x <= fruit_x +2 and fruit_y - 2 <=hunter_y <= fruit_y +2:
+            count += 1
+        return count
+
     # run the game n number of times then returns a list of scores of each final state.
     def run(self, numIterations = 1):
         scores = []
-        
+        hunter_near_fruit_count = 0
         # runs the game n iterations.
         for _ in range(0, numIterations):
             # creates a new start state and begins the game for the iteration. 
             state = self.getStartState()
-
             turn_counter = 0
             while not state.is_final():
+                hunter_near_fruit_count = self.hunter_from_fruit(state, hunter_near_fruit_count)
                 # draws the state of the game after both players made their turn.
                 if Config.showWindow and turn_counter % 2 == 0 and not mainDisplay.is_closed():
                     mainDisplay.draw(state)
@@ -86,7 +93,7 @@ class GameManager:
 
             scores.append(state.score())
 
-        return scores
+        return scores, hunter_near_fruit_count
                 
     # returns the next state based on expectiminimax.
     def expectiminimaxApproach(self, state):
