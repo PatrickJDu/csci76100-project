@@ -56,7 +56,8 @@ class GameManager:
 
                 # for each chromosome, run game and determine prey & hunter fitness values
                 for chromosome in range(Config.chromosomes):
-                    score = self.run(1, prey_new_population[chromosome], hunter_new_population[chromosome])[0]
+                    run_info = self.run(prey_new_population[chromosome], hunter_new_population[chromosome])
+                    score = run_info[0]
                     prey_score = ga.prey_score(score)
                     hunter_score = ga.hunter_score(score)
                     
@@ -127,11 +128,11 @@ class GameManager:
         else:
             prey_weights = pd.read_csv(Config.input_file_prey, header = None, index_col = None).to_numpy()
             hunter_weights = pd.read_csv(Config.input_file_hunter, header = None, index_col = None).to_numpy()
-            self.run(1, prey_weights, hunter_weights)
+            self.run(prey_weights, hunter_weights)
 
     # game manager init for expectiminimax algorithm goes here
     def initExpectiminimax(self):
-        self.run(1)
+        self.run()
 
     # creates the first state of a run and returns it.
     def getStartState(self):
@@ -148,43 +149,37 @@ class GameManager:
         # builds the first state and adds in the food at a random available position.
         return State(Config.PREY_TURN, Snake("prey", [prey_head]), Snake("hunter", [hunter_head]))
 
-    # run the game n number of times then returns a list of scores of each final state.
-    def run(self, numIterations = 1, w_prey = [], w_hunter = []):
-        scores = []
-        
-        # runs the game n iterations.
-        for _ in range(0, numIterations):
-            # creates a new start state and begins the game for the iteration. 
-            state = self.getStartState()
+    # run the game a single time and returns a list containing the score, hunter to fruit distance, and final state
+    def run(self, w_prey = [], w_hunter = []):
+        # creates a new start state and begins the game for the iteration. 
+        state = self.getStartState()
 
-            turn_counter = 0
-            while not state.is_final() and turn_counter <= Config.maxSteps:
-                # draws the state of the game after both players made their turn.
-                if Config.showWindow and turn_counter % 2 == 0 and not mainDisplay.is_closed():
-                    mainDisplay.draw(state)
-                
-                turn_counter += 1
-
-                # continues playing until it reach a final state.
-                # if a final state is met, the loop continues to keep the game window up.
-                if not state.is_final():
-                    # decides the next action based on the ai mode.
-                    if Config.aiMode == Config.EXPECTIMINIMAX:
-                        state = self.expectiminimaxApproach(state)
-                    else:
-                        state = self.geneticAlgorithmApproach(state, w_prey, w_hunter)
-                
-                # To give the functionality of closing the window.
-                if Config.showWindow and mainDisplay.is_closed():
-                    pass
-            
-            # draws the last state.
-            if Config.showWindow and not mainDisplay.is_closed():
+        turn_counter = 0
+        while not state.is_final() and turn_counter <= Config.maxSteps:
+            # draws the state of the game after both players made their turn.
+            if Config.showWindow and turn_counter % 2 == 0 and not mainDisplay.is_closed():
                 mainDisplay.draw(state)
+            
+            turn_counter += 1
 
-            scores.append(state.score())
+            # continues playing until it reach a final state.
+            # if a final state is met, the loop continues to keep the game window up.
+            if not state.is_final():
+                # decides the next action based on the ai mode.
+                if Config.aiMode == Config.EXPECTIMINIMAX:
+                    state = self.expectiminimaxApproach(state)
+                else:
+                    state = self.geneticAlgorithmApproach(state, w_prey, w_hunter)
+            
+            # To give the functionality of closing the window.
+            if Config.showWindow and mainDisplay.is_closed():
+                pass
+        
+        # draws the last state.
+        if Config.showWindow and not mainDisplay.is_closed():
+            mainDisplay.draw(state)
 
-        return scores
+        return [state.score(), state.distance(state.hunter.head(), state.food), state.get_final_state()]
                 
     # returns the next state based on expectiminimax.
     def expectiminimaxApproach(self, state):
@@ -195,17 +190,18 @@ class GameManager:
             next_state = state.next_state(emmHunterAI.getMove(state))
 
         if next_state is None:
+            state.set_final_state(Config.INVALID_MOVE)
             return state
         return next_state
 
     # returns the next state based on genetic algorithm.
     def geneticAlgorithmApproach(self, state, w_prey, w_hunter):
-
         # get next step
         next_state = state.next_state(genAI.getMove(state, w_prey, w_hunter))
 
         #return next step
         if next_state is None:
+            state.set_final_state(Config.INVALID_MOVE)
             return state
         return next_state
 

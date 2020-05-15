@@ -2,6 +2,12 @@
 # important global variables are defined here.
 import sys
 
+# block types
+(EMPTY_BLOCK, FRUIT_BLOCK, PREY_BLOCK, HUNTER_BLOCK, COLLISION_BLOCK) = (0, 1, 2, 3, 4)
+
+# final state flags
+(INVALID_MOVE, HUNTER_CAUGHT_PREY, PREY_CAUGHT_HUNTER, HUNTER_CAUGHT_SELF, PREY_CAUGHT_SELF, BOARD_FULL) = (0, 1, 2, 3, 4, 5)
+
 # the approach being used for the program. must be either EXPECTIMINIMAX or GENETIC_ALGORITHM.
 (EXPECTIMINIMAX, GENETIC_ALGORITHM) = (0, 1)
 aiMode = GENETIC_ALGORITHM

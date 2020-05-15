@@ -44,17 +44,17 @@ class Displayer:
         for i in range(0, Config.mapSize):
             for j in range(0, Config.mapSize):
                 blockNum = state.map[i][j]
-                if blockNum == 1:
+                if blockNum == Config.FRUIT_BLOCK:
                     self.draw_block(i, j, (0, 125, 255))
-                elif blockNum == 2:
+                elif blockNum == Config.PREY_BLOCK:
                     self.draw_block(i, j, (0, 255, 125))
                     if preyHead == (i, j):
                         self.draw_eyes(i, j)
-                elif blockNum == 3:
+                elif blockNum == Config.HUNTER_BLOCK:
                     self.draw_block(i, j, (255, 125, 0))
                     if hunterHead == (i, j):
                         self.draw_eyes(i, j)
-                elif blockNum == 4:
+                elif blockNum == Config.COLLISION_BLOCK:
                     self.draw_block(i, j, (255, 0, 0))
                     self.draw_eyes(i, j)
 
