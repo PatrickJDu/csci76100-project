@@ -73,6 +73,19 @@ class State:
     def score(self):
         return 0
 
+    # returns the shortest distance between two blocks for no walls.
+    def distance(self, block1, block2):
+         # returns a value that is reflected from the cetner of the map.
+        def reflectFromCenter(value):
+            if value < Config.mapCenter1:
+                return Config.mapCenter1 - 1 - value
+            else:
+                return Config.mapCenter1 + Config.mapCenter2 - 1 - (value - Config.mapCenter1)
+        
+        x_dist = min(abs(block1.x - block2.x), abs(reflectFromCenter(block1.x) - reflectFromCenter(block2.x)))
+        y_dist = min(abs(block1.y - block2.y), abs(reflectFromCenter(block1.y) - reflectFromCenter(block2.y)))
+        return x_dist + y_dist
+
     # returns the available spaces in the state.
     def get_available_spaces(self):
         return self.available_spaces
