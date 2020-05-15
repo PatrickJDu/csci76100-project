@@ -131,7 +131,7 @@ class GameManager:
 
     # game manager init for expectiminimax algorithm goes here
     def initExpectiminimax(self):
-        pass
+        self.run(1)
 
     # creates the first state of a run and returns it.
     def getStartState(self):

@@ -19,6 +19,8 @@ aiMode = GENETIC_ALGORITHM
 # size of the game screen and the grid.
 windowSize = 800
 mapSize = 25
+mapCenter1 = mapSize // 2
+mapCenter2 = mapSize - mapCenter1
 sizeRatio = windowSize // mapSize
 
 # the delay between each rendering of the state. must be an integer.
