@@ -157,6 +157,14 @@ class State:
 
         return True
 
+    # returns the a copy of the hunter's body with a size that is (prey's size // 5 + 1)
+    def hunter_growth(self):
+        hunter_blocks = self.hunter.cloneBlocks()
+        while len(hunter_blocks) < len(self.prey.body) // 5 + 1:
+            tail = hunter_blocks[0].clone()
+            hunter_blocks.insert(0, tail)
+        return hunter_blocks
+
     # returns the next state that the game will be in based on the move.
     def next_state(self, move):
         if move is not None:
@@ -171,7 +179,7 @@ class State:
                 if self.can_move(move, self.hunter):
                     next_turn = Config.PREY_TURN
                     next_prey = Snake("prey", self.prey.cloneBlocks(), self.prey.dir)
-                    next_hunter = Snake("hunter", self.hunter.cloneBlocks(), move)
+                    next_hunter = Snake("hunter", self.hunter_growth(), move)
                     moving_snake = next_hunter
             
             if moving_snake:
