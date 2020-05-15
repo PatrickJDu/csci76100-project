@@ -99,6 +99,9 @@ class State:
             else:
                 return Config.mapCenter1 + Config.mapCenter2 - 1 - (value - Config.mapCenter1)
         
+        if block1 is None or block2 is None:
+            return 0
+
         x_dist = min(abs(block1.x - block2.x), abs(reflectFromCenter(block1.x) - reflectFromCenter(block2.x)))
         y_dist = min(abs(block1.y - block2.y), abs(reflectFromCenter(block1.y) - reflectFromCenter(block2.y)))
         return x_dist + y_dist
@@ -129,9 +132,28 @@ class State:
 
     # returns true if the specifed snake can make the specifed move.
     def can_move(self, move, snake):
-        if len(snake.body) >= 2 and ((move == 0 and snake.dir == 1) or (move == 1 and snake.dir == 0) or (move == 2 and snake.dir == 3) or (move == 3 and snake.dir == 2)):
+        if len(snake.body) >= 2:
             # prevents a snake of at least length 2 from moving in its opposite direction.
-            return False
+            if move == Config.UP and snake.dir == Config.DOWN:
+                return False
+            if move == Config.DOWN and snake.dir == Config.UP:
+                return False
+            if move == Config.LEFT and snake.dir == Config.RIGHT:
+                return False
+            if move == Config.RIGHT and snake.dir == Config.LEFT:
+                return False
+
+        head = snake.head()
+        if snake.name == "hunter" and self.distance(head, self.food) == 1:
+            # prevents hunter from eating the fruit
+            if move == Config.UP and (head.y+1) % Config.mapSize == self.food.y:
+                return False
+            if move == Config.DOWN and (head.y-1) % Config.mapSize == self.food.y:
+                return False
+            if move == Config.LEFT and (head.x-1) % Config.mapSize == self.food.x:
+                return False
+            if move == Config.RIGHT and (head.x+1) % Config.mapSize == self.food.x:
+                return False
 
         return True
 
@@ -145,7 +167,7 @@ class State:
                     next_prey = Snake("prey", self.prey.cloneBlocks(), move)
                     next_hunter = Snake("hunter", self.hunter.cloneBlocks(), self.hunter.dir)
                     moving_snake = next_prey
-            else:
+            elif self.turn is Config.HUNTER_TURN:
                 if self.can_move(move, self.hunter):
                     next_turn = Config.PREY_TURN
                     next_prey = Snake("prey", self.prey.cloneBlocks(), self.prey.dir)
