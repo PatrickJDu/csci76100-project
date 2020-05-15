@@ -17,61 +17,78 @@ class State:
         self.food = foodBlock
 
         # generates a 2-dimensional array for the map with values initialized to 0. 1 for food. 2 for prey. 3 for hunter.
-        self.map = [[0] * Config.mapSize for i in range(Config.mapSize)]
+        self.map = [[Config.EMPTY_BLOCK] * Config.mapSize for i in range(Config.mapSize)]
 
         # whether or not this is the final state
-        self.final = False
+        self.final = None
 
         # if a food block was passed, sets the food block
         if self.food:
-            self.map[self.food.x][self.food.y] = 1
+            self.map[self.food.x][self.food.y] = Config.FRUIT_BLOCK
 
         # sets the prey blocks on the map.
         for block in self.prey.body:
-            if self.map[block.x][block.y] == 0:
-                self.map[block.x][block.y] = 2
+            if self.map[block.x][block.y] == Config.EMPTY_BLOCK:
+                self.map[block.x][block.y] = Config.PREY_BLOCK
             else:
+                if self.map[block.x][block.y] == Config.PREY_BLOCK:
+                    self.set_final_state(Config.PREY_CAUGHT_SELF)
+                elif self.map[block.x][block.y] == Config.HUNTER_BLOCK:
+                    self.set_final_state(Config.PREY_CAUGHT_HUNTER)
+
                 # if a collision is detected, the block is treated as a fail block and the state becomes a final state.
-                self.map[block.x][block.y] = 4
-                self.final = True
+                self.map[block.x][block.y] = Config.COLLISION_BLOCK
         
         # sets the hunter blocks on the map.
         for block in self.hunter.body:
-            if self.map[block.x][block.y] == 0:
-                self.map[block.x][block.y] = 3
+            if self.map[block.x][block.y] == Config.EMPTY_BLOCK:
+                self.map[block.x][block.y] = Config.HUNTER_BLOCK
             else:
+                if self.map[block.x][block.y] == Config.PREY_BLOCK:
+                    self.set_final_state(Config.HUNTER_CAUGHT_PREY)
+                elif self.map[block.x][block.y] == Config.HUNTER_BLOCK:
+                    self.set_final_state(Config.HUNTER_CAUGHT_SELF)
+
                 # if a collision is detected, the block is treated as a fail block and the state becomes a final state.
-                self.map[block.x][block.y] = 4
-                self.final = True
+                self.map[block.x][block.y] = Config.COLLISION_BLOCK
 
         # stores the available spaces on the map.
         self.available_spaces = []
     
         for i in range(0, Config.mapSize):
             for j in range(0, Config.mapSize):
-                if self.map[i][j] == 0:
+                if self.map[i][j] == Config.EMPTY_BLOCK:
                     self.available_spaces.append([i, j])
         
         # if there is no food, tries to add a food in a random spot.
         if self.food is None and len(self.available_spaces):
             space = self.available_spaces[random.randint(0, len(self.available_spaces) - 1)]
             self.food = Block(space[0], space[1])
-            self.map[self.food.x][self.food.y] = 1
+            self.map[self.food.x][self.food.y] = Config.FRUIT_BLOCK
 
         # if no more food can be spawned, the state becomes a final state.
         if self.food is None:
-            self.final = True
+            self.set_final_state(Config.BOARD_FULL)
 
-    # returns true if the state is in its final state.
+    # sets the final state once
+    def set_final_state(self, final_state):
+        if self.final is None:
+            self.final = final_state
+
+    # returns true if the state is in a final state.
     def is_final(self):
+        return self.final is not None
+
+    # returns the type of final state
+    def get_final_state(self):
         return self.final
 
     # returns true if the given position of the block is empty.
     def is_empty(self, block):
-        return self.map[block.x][block.y] == 0
+        return self.map[block.x][block.y] == Config.EMPTY_BLOCK
 
     def score(self):
-        return 0
+        return len(self.prey.body) - 1
 
     # returns the shortest distance between two blocks for no walls.
     def distance(self, block1, block2):
