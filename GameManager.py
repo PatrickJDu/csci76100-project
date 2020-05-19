@@ -1,6 +1,6 @@
 import random
 import Config
-import geneticAlgorithm as ga
+import GeneticAlgorithm as ga
 import numpy as np
 import pandas as pd
 from Displayer import mainDisplay
@@ -137,7 +137,10 @@ class GameManager:
 
     # game manager init for expectiminimax algorithm goes here
     def initExpectiminimax(self):
-        self.run()
+        results = self.run()
+        # print results from expectiminimax
+        if(results[2] == Config.HUNTER_CAUGHT_PREY):
+            print('score:', results[0], 'hunter near fruit:', results[1])
 
     # creates the first state of a run and returns it.
     def getStartState(self):
