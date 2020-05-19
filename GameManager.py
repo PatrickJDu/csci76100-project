@@ -1,6 +1,6 @@
 import random
 import Config
-import GeneticAlgorithm as ga
+import geneticAlgorithm as ga
 import numpy as np
 import pandas as pd
 from Displayer import mainDisplay
@@ -48,6 +48,8 @@ class GameManager:
             fittest_hunter_weights = []
             fittest_prey_score = 0
             fittest_hunter_score = 0
+            max_prey_fitness = 0
+            max_hunter_fitness = 0
 
             # iterate over each generation
             for generation in range(Config.num_of_generations):
@@ -58,8 +60,10 @@ class GameManager:
                 for chromosome in range(Config.chromosomes):
                     run_info = self.run(prey_new_population[chromosome], hunter_new_population[chromosome])
                     score = run_info[0]
-                    prey_score = ga.prey_score(score)
-                    hunter_score = ga.hunter_score(score)
+                    hunter_near_fruit = run_info[1]
+                    final_state_flag = run_info[2]
+                    prey_score = ga.prey_score(score, final_state_flag)
+                    hunter_score = ga.hunter_score(score, hunter_near_fruit, final_state_flag)
                     
                     # update fittest prey & hunter scores if prey & hunter surpass previous fittest
                     if prey_score > fittest_prey_score:
@@ -80,13 +84,13 @@ class GameManager:
                     max_prey_fitness = np.amax(prey_fitness)
 
                     # determine prey parents based on highest fitness values
-                    prey_parents = ga.select_mating_pool(prey_new_population, prey_fitness, Config.num_of_parents)
+                    prey_parents = ga.select_parents(prey_new_population, prey_fitness, Config.num_of_parents)
 
                     # determine prey offsprings using crossover method on selected parents
-                    prey_offspring_crossover = ga.crossover(prey_parents, offspring_size = (Config.population_matrix_size[0] - prey_parents.shape[0], Config.num_w_all))
+                    prey_offspring_crossover = ga.breed(prey_parents, offspring_size = (Config.population_matrix_size[0] - prey_parents.shape[0], Config.num_w_all))
 
                     # randomly mutate offspring chromosomes to build in gene diversity
-                    prey_offspring_mutation = ga.mutation(prey_offspring_crossover)
+                    prey_offspring_mutation = ga.mutate(prey_offspring_crossover)
 
                     # create new prey populations based on selected parents and offspirngs
                     prey_new_population[0 : prey_parents.shape[0], :] = prey_parents
@@ -99,13 +103,13 @@ class GameManager:
                     max_hunter_fitness = np.amax(hunter_fitness)
 
                     # determine hunter parents based on highest fitness values
-                    hunter_parents = ga.select_mating_pool(hunter_new_population, hunter_fitness, Config.num_of_parents)
+                    hunter_parents = ga.select_parents(hunter_new_population, hunter_fitness, Config.num_of_parents)
 
                     # determine hunter offsprings using crossover method on selected parents
-                    hunter_offspring_crossover = ga.crossover(hunter_parents, offspring_size = (Config.population_matrix_size[0] - hunter_parents.shape[0], Config.num_w_all))
+                    hunter_offspring_crossover = ga.breed(hunter_parents, offspring_size = (Config.population_matrix_size[0] - hunter_parents.shape[0], Config.num_w_all))
 
                     # randomly mutate offspring chromosomes to build in gene diversity
-                    hunter_offspring_mutation = ga.mutation(hunter_offspring_crossover)
+                    hunter_offspring_mutation = ga.mutate(hunter_offspring_crossover)
 
                     # create new hunter populations based on selected parents and offspirngs
                     hunter_new_population[0 : hunter_parents.shape[0], :] = hunter_parents
@@ -128,7 +132,8 @@ class GameManager:
         else:
             prey_weights = pd.read_csv(Config.input_file_prey, header = None, index_col = None).to_numpy()
             hunter_weights = pd.read_csv(Config.input_file_hunter, header = None, index_col = None).to_numpy()
-            self.run(prey_weights, hunter_weights)
+            for i in range(15):
+                self.run(prey_weights, hunter_weights)
 
     # game manager init for expectiminimax algorithm goes here
     def initExpectiminimax(self):
@@ -155,11 +160,15 @@ class GameManager:
         state = self.getStartState()
 
         turn_counter = 0
+        hunter_near_fruit = 0
         while not state.is_final() and turn_counter <= Config.maxSteps:
             # draws the state of the game after both players made their turn.
             if Config.showWindow and turn_counter % 2 == 0 and not mainDisplay.is_closed():
                 mainDisplay.draw(state)
             
+            if state.distance(state.hunter.head(), state.food) <= Config.hunterPenaltyRadius:
+                hunter_near_fruit += 1
+
             turn_counter += 1
 
             # continues playing until it reach a final state.
@@ -179,7 +188,7 @@ class GameManager:
         if Config.showWindow and not mainDisplay.is_closed():
             mainDisplay.draw(state)
 
-        return [state.score(), state.distance(state.hunter.head(), state.food), state.get_final_state()]
+        return [state.score(), hunter_near_fruit, state.get_final_state()]
                 
     # returns the next state based on expectiminimax.
     def expectiminimaxApproach(self, state):
