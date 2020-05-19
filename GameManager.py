@@ -1,6 +1,6 @@
 import random
 import Config
-import Genetic_Algorithm as ga
+import GeneticAlgorithm as ga
 import numpy as np
 import pandas as pd
 from Displayer import mainDisplay
