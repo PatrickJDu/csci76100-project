@@ -10,7 +10,7 @@ import sys
 
 # the approach being used for the program. must be either EXPECTIMINIMAX or GENETIC_ALGORITHM.
 (EXPECTIMINIMAX, GENETIC_ALGORITHM) = (0, 1)
-aiMode = GENETIC_ALGORITHM
+aiMode = int(sys.argv[1])
 #if len(sys.argv) == 1:
 #    aiMode = GENETIC_ALGORITHM
 #else:
@@ -66,5 +66,7 @@ if len(sys.argv) >= 5:
 showWindow = True
 if len(sys.argv) >= 3 and sys.argv[2] == '0':
     showWindow = False
+
+hunterPenaltyRadius = 8
 
 #GameManager.py (EXPECTIMINIMAX/GENETIC_ALGORITHM) (DISPLAY_ON/DISPLAY_OFF) (TRAIN/LOAD_POPULATION/LOAD_WEIGHT) (TRAIN BOTH/PREY/HUNTER or LOAD_PREY) (LOAD_HUNTER)

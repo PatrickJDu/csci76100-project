@@ -14,6 +14,10 @@ class Snake:
         # Either UP, DOWN, LEFT, or RIGHT.
         self.dir = dir
 
+    # returns a deep copy of the snake.
+    def clone(self):
+        return Snake(self.name, self.cloneBlocks(), self.dir)
+
     # returns a deep copy of the body.
     def cloneBlocks(self):
         trail = []
