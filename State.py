@@ -6,13 +6,16 @@ from Snake import Snake
 # the state of the game. holds the current turn. prey and hunter snake info.
 class State:
     # set withFruit to false to supply the next states without the fruit placed on the map.
-    def __init__(self, turn, preySnake, hunterSnake, withFruit = True, foodBlock = None):
+    def __init__(self, turn, preySnake, hunterSnake, withFruit = True, foodBlock = None, eater = None):
         # turn determines who turn it for the next move.
         self.turn = turn
 
         # creates the two snakes with their respective blocks.
         self.prey   = preySnake
         self.hunter = hunterSnake
+
+        # the snake that ate the previous fruit in the previous state
+        self.eater = eater
 
         # represents the block for the food.
         self.food = foodBlock
@@ -196,7 +199,7 @@ class State:
                 next_block = moving_snake.next_move()
                 moving_snake.addHead(next_block)
                 if self.food and self.food.x == next_block.x and self.food.y == next_block.y:
-                    return State(next_turn, next_prey, next_hunter, withFruit)
+                    return State(next_turn, next_prey, next_hunter, withFruit, eater = moving_snake)
                 else:
                     moving_snake.removeTail()
                     if self.food is None:

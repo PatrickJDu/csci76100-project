@@ -11,6 +11,15 @@ import sys
 # the approach being used for the program. must be either EXPECTIMINIMAX or GENETIC_ALGORITHM.
 (EXPECTIMINIMAX, GENETIC_ALGORITHM) = (0, 1)
 aiMode = int(sys.argv[1])
+
+smartPrey = True
+smartHunter = True
+if aiMode == EXPECTIMINIMAX:
+    if len(sys.argv) >= 4 and sys.argv[3] == "0":
+        smartPrey = False
+    if len(sys.argv) >= 5 and sys.argv[4] == "0":
+        smartHunter = False
+
 #if len(sys.argv) == 1:
 #    aiMode = GENETIC_ALGORITHM
 #else:
@@ -55,7 +64,8 @@ if len(sys.argv) >= 4:
     ga_mode = int(sys.argv[3])
     if sys.argv[3] == '1' or sys.argv[3] == '2':
         input_file_prey = sys.argv[4]
-        input_file_hunter = sys.argv[5]
+        if len(sys.argv) >= 6:
+            input_file_hunter = sys.argv[5]
 
 # genetic algorithm training mode. 0 = train both prey & hunter, 1 = train prey, 2 = train hunter. 0 set as default.
 ga_training_mode = 0
@@ -69,4 +79,5 @@ if len(sys.argv) >= 3 and sys.argv[2] == '0':
 
 hunterPenaltyRadius = 8
 
-#GameManager.py (EXPECTIMINIMAX/GENETIC_ALGORITHM) (DISPLAY_ON/DISPLAY_OFF) (TRAIN/LOAD_POPULATION/LOAD_WEIGHT) (TRAIN BOTH/PREY/HUNTER or LOAD_PREY) (LOAD_HUNTER)
+#GameManager.py (GENETIC_ALGORITHM) (DISPLAY_ON/DISPLAY_OFF) (TRAIN/LOAD_POPULATION/LOAD_WEIGHT) (TRAIN BOTH/PREY/HUNTER or LOAD_PREY) (LOAD_HUNTER)
+#GameManager.py (EXPECTIMINIMAX) (DISPLAY_ON/DISPLAY_OFF) (SMART/DUMB PREY) (SMART/DUMB HUNTER)

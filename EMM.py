@@ -82,12 +82,14 @@ def prey_evaluate(state):
 
     # minimize prey's distance from fruit
     h3 = 1 - state.distance(state.prey.head(), state.food)/Config.mapSize
+    if state.eater == state.prey:
+        h3 = 1
     
     # maximizes hunter's distance from fruit
     h4 = state.distance(state.food, state.hunter.head())/Config.mapSize
 
     # maximize prey's head distance from hunter
-    h5 = state.distance(state.prey.tail(), state.hunter.head())/Config.mapSize
+    h5 = state.distance(state.prey.head(), state.hunter.head())/Config.mapSize
 
     w1 = 0.15
     w2 = 0.45
@@ -116,8 +118,8 @@ def hunter_evaluate(state):
     # minimize prey's tail distance from hunter
     h4 = state.distance(state.prey.tail(), state.hunter.head())/Config.mapSize
 
-    w1 = 0.25
-    w2 = 0.10
-    w3 = 0.45
-    w4 = 0.20
+    w1 = 0.05
+    w2 = 0.05
+    w3 = 0.75
+    w4 = 0.15
     return h1*w1 + h2*w2 + h3*w3 - h4*w4
