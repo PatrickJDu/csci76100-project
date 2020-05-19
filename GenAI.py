@@ -2,6 +2,7 @@
 import random
 import math
 import Config
+from State import State
 import numpy as np
 from BaseAI import BaseAI
 from State import State
@@ -172,6 +173,8 @@ class GenAI(BaseAI):
         left_block_status = state.is_empty(Block(adjacent_direction_blocks[1][0], adjacent_direction_blocks[1][1]))
         right_block_status = state.is_empty(Block(adjacent_direction_blocks[2][0], adjacent_direction_blocks[2][1]))
 
+        #print(front_block_status, left_block_status, right_block_status)
+
         #Determine vector to food and other snake
         food_vector = block2block_angle_dist(self_x, self_y, food_x, food_y, self_dir, Config.mapSize)
         other_snake_vector = block2block_angle_dist(self_x, self_y, other_x, other_y, self_dir, Config.mapSize)
@@ -185,7 +188,22 @@ class GenAI(BaseAI):
         #Predict next move based on neural network feedforwarding
         predicted_move = nn.forward_propagation(np.array([front_block_status, left_block_status, right_block_status, self_dir/3, food_angle, food_distance, other_snake_angle, other_snake_distance]), weight)
 
-        return turn2direction(predicted_move, self_dir)
+        #Convert predicted move to global direction
+        predicted_direction = turn2direction(predicted_move, self_dir)
+
+        #Determine number of available moves
+        available_moves = state.get_available_moves()
+        available_moves_list = []
+        for i in range(len(available_moves)):
+            available_moves_list.append(available_moves[i][0])
+
+        #Avoid collision if possible
+        if state.next_state(predicted_direction).is_final():
+             for i in range(len(available_moves_list)):
+                if not state.next_state(available_moves_list[i]).is_final():
+                     predicted_direction = available_moves_list[i]
+
+        return predicted_direction
 
 #Instance of GenAI class to initiate object
 genAI = GenAI()
