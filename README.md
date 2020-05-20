@@ -9,7 +9,7 @@ GameManager.py 1 (DISPLAY_ON/DISPLAY_OFF) (TRAIN/LOAD_POPULATION/LOAD_WEIGHT) (T
 
 # (TRAIN/LOAD_POPULATION/LOAD_WEIGHT) 0 to train the neural network from scratch, 1 to train from a certain generation (Provide a csv file), 2 to use a generation (Provide a csv file)
 
-# (TRAIN BOTH/PREY/HUNTER or LOAD_PREY) If 1 or 2 was not specified in the prevous argument nothing is needed here. However, if there values are provided, a csv file msut be provided to mark the generation seed.
+# (TRAIN BOTH/PREY/HUNTER or LOAD_PREY) If 1 or 2 was not specified in the prevous argument then 0, 1 and 2 are used. 0 to train both prey and hunter, 1 to train only prey and 2 to train only hunter. However, if there values are provided, a csv file msut be provided to mark the generation seed.
 
 # (LOAD_HUNTER) Same as the last argument.
 
