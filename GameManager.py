@@ -140,7 +140,7 @@ class GameManager:
         results = self.run()
         # print results from expectiminimax
         if(results[2] == Config.HUNTER_CAUGHT_PREY):
-            print('score:', results[0], 'hunter near fruit:', results[1])
+            print('score:', results[0])
 
     # creates the first state of a run and returns it.
     def getStartState(self):
