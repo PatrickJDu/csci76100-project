@@ -96,7 +96,7 @@ def prey_evaluate(state):
     w3 = 0.20
     w4 = 0.10
     w5 = 0.10
-    return h1*w1 + h2*w2 + h3*w3 - h4*w4 + h5*w5
+    return h1*w1 + h2*w2 + h3*w3 + h4*w4 + h5*w5
 
 def hunter_evaluate(state):
     # enforce collision
@@ -116,10 +116,10 @@ def hunter_evaluate(state):
         h3 = hunter_fruit_dist/(Config.hunterPenaltyRadius + 1)
 
     # minimize prey's tail distance from hunter
-    h4 = state.distance(state.prey.tail(), state.hunter.head())/Config.mapSize
+    h4 = 1 - state.distance(state.prey.tail(), state.hunter.head())/Config.mapSize
 
     w1 = 0.05
     w2 = 0.05
     w3 = 0.75
     w4 = 0.15
-    return h1*w1 + h2*w2 + h3*w3 - h4*w4
+    return h1*w1 + h2*w2 + h3*w3 + h4*w4
