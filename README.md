@@ -13,6 +13,8 @@ GameManager.py 1 (DISPLAY_ON/DISPLAY_OFF) (TRAIN/LOAD_POPULATION/LOAD_WEIGHT) (T
 
 # (LOAD_HUNTER) Same as the last argument.
 
+# prey_0.csv, prey_50.csv, prey_100.csv, hunter_0.csv, hunter_50.csv and hunter_100.csv have been added to the project to be used as generation seeds 
+
 # Run expectiminimax, outputs the score of the run (prey size - 1).
 GameManager.py 0 (DISPLAY_ON/DISPLAY_OFF) (SMART/RANDOM PREY) (SMART/RANDOM HUNTER)
 
